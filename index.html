@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEXUS.J // Portfolio</title>
+    <meta name="description" content="Portfolio of a creative developer — built for deep space." />
+
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#050510',
+                        nebula: '#0b0b1f',
+                        plasma: '#7c3aed',
+                        ion: '#22d3ee',
+                        flare: '#f472b6',
+                        gold: '#fbbf24',
+                    },
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        body: ['Rajdhani', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ===== Base ===== */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #7c3aed #0b0b1f;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #050510;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .font-display {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* ===== Starfield ===== */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== Glow Texts ===== */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(124, 58, 237, 0.8), 0 0 30px rgba(124, 58, 237, 0.4);
+        }
+
+        .glow-cyan {
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.8), 0 0 30px rgba(34, 211, 238, 0.4);
+        }
+
+        /* ===== HUD Panel ===== */
+        .hud-panel {
+            background: linear-gradient(160deg, rgba(20, 20, 45, 0.7), rgba(10, 10, 25, 0.6));
+            backdrop-filter: blur(10px);
+            position: relative;
+            clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+            border: 1px solid rgba(124, 58, 237, 0.5);
+            animation: borderPulse 4s ease-in-out infinite;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .hud-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.08), transparent);
+            pointer-events: none;
+        }
+
+        .grid-overlay {
+            background-image: linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridScroll 20s linear infinite;
+        }
+
+        @keyframes borderPulse {
+
+            0%,
+            100% {
+                border-color: rgba(124, 58, 237, 0.5);
+                box-shadow: 0 0 15px rgba(124, 58, 237, 0.15);
+            }
+
+            50% {
+                border-color: rgba(34, 211, 238, 0.7);
+                box-shadow: 0 0 35px rgba(34, 211, 238, 0.25);
+            }
+        }
+
+        @keyframes gridScroll {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 40px 40px;
+            }
+        }
+
+        .hud-corner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #22d3ee;
+        }
+
+        .corner-tl {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-br {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* ===== Orbit Rings ===== */
+        @keyframes orbit-spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .orbit-ring {
+            animation: orbit-spin 40s linear infinite;
+        }
+
+        .orbit-ring-rev {
+            animation: orbit-spin 60s linear infinite reverse;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes float-y {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+
+        .float-y {
+            animation: float-y 6s ease-in-out infinite;
+        }
+
+        /* ===== Scanline Bar ===== */
+        .scanline-bar {
+            background: linear-gradient(90deg, transparent, #22d3ee, transparent);
+            height: 1px;
+        }
+
+        /* ===== Button ===== */
+        .btn-thrust {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-thrust::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-thrust:hover::before {
+            left: 100%;
+        }
+
+        /* ===== Skill ===== */
+        .skill-fill {
+            background: linear-gradient(90deg, #7c3aed, #22d3ee);
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+            width: 0%;
+            transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== Card 3D Tilt ===== */
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .card-hover:hover {
+            border-color: rgba(34, 211, 238, 0.8);
+            box-shadow: 0 20px 60px -10px rgba(124, 58, 237, 0.6);
+        }
+
+        /* ===== Nav Link ===== */
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #22d3ee;
+            box-shadow: 0 0 8px #22d3ee;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* ===== Reveal ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::selection {
+            background: #7c3aed;
+            color: #fff;
+        }
+
+        .planet {
+            box-shadow: inset -20px -20px 50px rgba(0, 0, 0, 0.6), 0 0 60px rgba(124, 58, 237, 0.4);
+        }
+
+        .profile-img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ===== CURSOR BLINK ===== */
+        .cursor-blink {
+            animation: blink 0.8s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ====================================================== */
+        /* ===== ပုံအတွက် Animation (Scanline, Glitch, Orbiting Dots) ===== */
+        /* ====================================================== */
+
+        .scanline-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.25) 2px,
+                    rgba(0, 0, 0, 0.25) 4px);
+            pointer-events: none;
+            z-index: 2;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .scanline-beam {
+            position: absolute;
+            top: -100%;
+            left: -10%;
+            width: 120%;
+            height: 25%;
+            background: linear-gradient(0deg,
+                    transparent,
+                    rgba(34, 211, 238, 0.25),
+                    transparent);
+            transform: rotate(-10deg);
+            animation: scanMove 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            z-index: 3;
+            pointer-events: none;
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+
+        @keyframes scanMove {
+            0% {
+                top: -30%;
+            }
+
+            100% {
+                top: 120%;
+            }
+        }
+
+        @keyframes ringPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(34, 211, 238, 0.3), inset 0 0 15px rgba(34, 211, 238, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(124, 58, 237, 0.7), inset 0 0 30px rgba(124, 58, 237, 0.3);
+            }
+        }
+
+        .pulsing-ring {
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+
+        .glitch-hover {
+            transition: filter 0.3s ease, transform 0.2s ease;
+        }
+
+        .glitch-hover:hover {
+            filter: hue-rotate(25deg) contrast(1.3) brightness(1.1);
+            animation: glitchAnim 0.4s ease forwards;
+        }
+
+        @keyframes glitchAnim {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-3px, 2px) scale(1.02);
+            }
+
+            40% {
+                transform: translate(3px, -2px) scale(0.98);
+            }
+
+            60% {
+                transform: translate(-2px, -1px) scale(1.01);
+            }
+
+            80% {
+                transform: translate(2px, 1px) scale(0.99);
+            }
+
+            100% {
+                transform: translate(0) scale(1);
+            }
+        }
+
+        .orbit-dot {
+            position: absolute;
+            border-radius: 50%;
+            box-shadow: 0 0 12px currentColor;
+            width: 8px;
+            height: 8px;
+            background: white;
+        }
+
+        /* ====================================================== */
+        /* ===== FEATURE A: Sci-Fi Custom Cursor ===== */
+        /* ====================================================== */
+        #custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(34, 211, 238, 0.9);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s ease, height 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+            background: rgba(34, 211, 238, 0.05);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3), inset 0 0 20px rgba(34, 211, 238, 0.1);
+            backdrop-filter: blur(2px);
+        }
+
+        #custom-cursor::before {
+            content: '+';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #22d3ee;
+            font-size: 16px;
+            font-weight: 300;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+            transition: font-size 0.2s ease;
+        }
+
+        #custom-cursor.hover {
+            width: 48px;
+            height: 48px;
+            border-color: rgba(124, 58, 237, 0.9);
+            background: rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.5), inset 0 0 40px rgba(124, 58, 237, 0.2);
+        }
+
+        #custom-cursor.hover::before {
+            font-size: 22px;
+            color: #7c3aed;
+        }
+
+        /* ====================================================== */
+        /* ===== FEATURE B: Back to Top Orbital Booster ===== */
+        /* ====================================================== */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 50;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, rgba(124, 58, 237, 0.8), rgba(34, 211, 238, 0.6));
+            border: 1px solid rgba(34, 211, 238, 0.8);
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(30px) scale(0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            overflow: hidden;
+        }
+
+        #backToTop.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+
+        #backToTop:hover {
+            background: linear-gradient(145deg, rgba(124, 58, 237, 1), rgba(34, 211, 238, 0.9));
+            box-shadow: 0 0 60px rgba(124, 58, 237, 0.7);
+            transform: translateY(-4px) scale(1.05);
+            border-color: #fff;
+        }
+
+        #backToTop::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.8), transparent);
+            border-radius: 50%;
+            filter: blur(6px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #backToTop:hover::after {
+            opacity: 1;
+        }
+
+        #backToTop .arrow {
+            position: relative;
+            z-index: 2;
+            line-height: 1;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        /* ====================================================== */
+        /* ===== FEATURE C: Touch Ripple (Mobile အတွက်) ===== */
+        /* ====================================================== */
+        a,
+        button,
+        .btn-thrust,
+        .card-hover,
+        .hud-panel,
+        .nav-link,
+        input,
+        textarea,
+        #backToTop {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.8) 0%, rgba(124, 58, 237, 0.6) 100%);
+            transform: scale(0);
+            animation: rippleAnim 0.8s ease-out forwards;
+            pointer-events: none;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+            will-change: transform, opacity;
+        }
+
+        @keyframes rippleAnim {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(3.5);
+                opacity: 0;
+            }
+        }
+
+        /* ====================================================== */
+        /* ===== FEATURE D: Journey Timeline ===== */
+        /* ====================================================== */
+        .timeline-line {
+            position: absolute;
+            left: 18px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, #22d3ee, #7c3aed, #22d3ee);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 12px;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #050510;
+            border: 2px solid #22d3ee;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.6), inset 0 0 10px rgba(34, 211, 238, 0.2);
+            z-index: 5;
+        }
+
+        .timeline-dot.active {
+            background: #22d3ee;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.8);
+        }
+
+        /* Timeline cards alternating sides on desktop */
+        @media (min-width: 768px) {
+            .timeline-item:nth-child(odd) .timeline-card {
+                margin-left: 0;
+                margin-right: auto;
+                text-align: left;
+            }
+
+            .timeline-item:nth-child(even) .timeline-card {
+                margin-left: auto;
+                margin-right: 0;
+                text-align: right;
+            }
+
+            /* Keep dot positions consistent */
+            .timeline-item .timeline-dot {
+                left: 50%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .timeline-line {
+                left: 12px;
+            }
+
+            .timeline-dot {
+                left: 6px;
+                transform: translateX(0);
+                width: 12px;
+                height: 12px;
+            }
+
+            .timeline-item .timeline-card {
+                margin-left: 30px !important;
+                text-align: left !important;
+            }
+        }
+
+        /* ====================================================== */
+        /* ===== RESPONSIVE (Mobile) ===== */
+        /* ====================================================== */
+        @media (max-width: 768px) {
+
+            .orbit-ring,
+            .orbit-ring-rev {
+                display: none;
+            }
+
+            .orbit-dot {
+                display: none;
+            }
+
+            #custom-cursor {
+                display: none;
+            }
+
+            body {
+                cursor: auto;
+            }
+
+            #backToTop {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-slate-200 antialiased">
+
+    <!-- ===== FEATURE A: CUSTOM CURSOR ===== -->
+    <div id="custom-cursor"></div>
+
+    <!-- ===== FEATURE B: BACK TO TOP BUTTON ===== -->
+    <button id="backToTop" aria-label="Back to top">
+        <span class="arrow">↑</span>
+    </button>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div id="progress-bar"
+        class="fixed top-0 left-0 h-1 bg-gradient-to-r from-plasma to-ion z-50 transition-all duration-150"
+        style="width: 0%;"></div>
+
+    <canvas id="starfield"></canvas>
+    <div class="fixed inset-0 grid-overlay z-0 opacity-40"></div>
+
+    <!-- Soft Cursor Glow -->
+    <div id="cursor-glow" class="hidden md:block fixed w-64 h-64 rounded-full pointer-events-none z-10 opacity-20"
+        style="background: radial-gradient(circle, rgba(124,58,237,0.5), transparent 70%); transform: translate(-50%,-50%);">
+    </div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav id="navbar" class="fixed top-0 w-full z-40 transition-all duration-500">
+        <div class="scanline-bar"></div>
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#home"
+                class="font-display text-xl font-900 text-white glow-cyan tracking-widest flex items-center gap-3">
+                NEXUS.J<span class="text-plasma">.</span>
+                <span class="relative flex h-3 w-3">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+            </a>
+            <ul class="hidden md:flex gap-10 font-display text-xs tracking-[0.2em] uppercase text-slate-300">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">Pilot</a></li>
+                <li><a href="#profile" class="nav-link">Profile</a></li>
+                <li><a href="#skills" class="nav-link">Systems</a></li>
+                <li><a href="#projects" class="nav-link">Missions</a></li>
+                <li><a href="#contact" class="nav-link">Transmit</a></li>
+            </ul>
+            <button id="menu-btn" class="md:hidden text-ion text-2xl">☰</button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-nebula/95 border-t border-plasma/30 px-6 py-4">
+            <ul class="flex flex-col gap-4 font-display text-sm tracking-widest uppercase text-slate-300">
+                <li><a href="#home" class="mobile-link block py-1">Home</a></li>
+                <li><a href="#about" class="mobile-link block py-1">Pilot</a></li>
+                <li><a href="#profile" class="mobile-link block py-1">Profile</a></li>
+                <li><a href="#skills" class="mobile-link block py-1">Systems</a></li>
+                <li><a href="#projects" class="mobile-link block py-1">Missions</a></li>
+                <li><a href="#contact" class="mobile-link block py-1">Transmit</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center px-6 z-10 pt-24">
+        <div class="absolute right-[-100px] top-1/2 -translate-y-1/2 w-[500px] h-[500px] hidden lg:block opacity-70">
+            <div class="absolute inset-0 rounded-full border border-plasma/30 orbit-ring"></div>
+            <div class="absolute inset-8 rounded-full border border-ion/20 orbit-ring-rev"></div>
+            <div
+                class="absolute inset-24 rounded-full planet bg-gradient-to-br from-plasma via-fuchsia-700 to-nebula float-y">
+            </div>
+            <div class="absolute top-1/2 left-0 w-3 h-3 rounded-full bg-ion pulse-glow"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
+            <div>
+                <p
+                    class="font-display text-ion text-xs sm:text-sm tracking-[0.3em] uppercase mb-4 flex items-center gap-2">
+                    <span class="w-8 h-[2px] bg-ion"></span> Transmission Incoming
+                </p>
+                <h1 class="font-display font-900 text-4xl sm:text-6xl lg:text-7xl leading-tight text-white glow-text">
+                    JAMES <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-plasma via-flare to-ion">LORAN</span>
+                </h1>
+                <p class="mt-4 text-lg sm:text-xl text-slate-300 font-medium tracking-wide h-8">
+                    <span id="typed-text" class="border-r-2 border-ion pr-1"></span>
+                </p>
+                <p class="mt-6 text-slate-400 max-w-md leading-relaxed">
+                    Launching interfaces across the galaxy of the web — from immersive front-ends to
+                    resilient back-end systems. Currently orbiting new opportunities.
+                </p>
+                <div class="mt-10 flex flex-wrap gap-4">
+                    <a href="#projects"
+                        class="btn-thrust font-display uppercase text-sm tracking-widest px-8 py-3.5 bg-gradient-to-r from-plasma to-fuchsia-600 text-white rounded-sm shadow-[0_0_25px_rgba(124,58,237,0.6)] hover:shadow-[0_0_40px_rgba(124,58,237,0.9)]">
+                        View Missions
+                    </a>
+                    <a href="#contact"
+                        class="btn-thrust font-display uppercase text-sm tracking-widest px-8 py-3.5 border border-ion/50 text-ion rounded-sm hover:bg-ion/10 hover:shadow-[0_0_25px_rgba(34,211,238,0.4)]">
+                        Open Channel
+                    </a>
+                </div>
+
+                <div class="mt-14 flex gap-8 font-display">
+                    <div>
+                        <p class="text-3xl font-900 text-white glow-cyan" data-counter="27">0</p>
+                        <p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Missions Flown</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-900 text-white glow-cyan" data-counter="4">0</p>
+                        <p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Years in Orbit</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl font-900 text-white glow-cyan" data-counter="99">0</p>
+                        <p class="text-xs text-slate-500 uppercase tracking-widest mt-1">% Uptime</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hud-panel p-8 reveal">
+                <div class="hud-corner corner-tl"></div>
+                <div class="hud-corner corner-br"></div>
+                <p class="font-display text-xs text-ion uppercase tracking-[0.2em] mb-4">// Pilot Status</p>
+                <div class="space-y-3 font-mono text-sm text-slate-300">
+                    <p><span class="text-plasma">callsign</span>: <span class="text-white">Khant_Zaw_Htet</span></p>
+                    <p><span class="text-plasma">status</span>: <span class="text-emerald-400">● Online — Available for
+                            Freelance & Collaboration</span></p>
+                    <p><span class="text-plasma">location</span>: <span class="text-white">Myanmar</span></p>
+                    <p><span class="text-plasma">stack</span>: <span class="text-white">JS · Django · PHP ·
+                            Python</span></p>
+                    <p><span class="text-plasma">role</span>: <span class="text-gold">Full Stack Developer</span></p>
+                    <p><span class="text-plasma">current-mission</span>: <span class="text-white">Building Real World
+                            Projects</span></p>
+
+                </div>
+                <div class="mt-6 h-px w-full bg-gradient-to-r from-transparent via-plasma to-transparent"></div>
+                <p class="mt-4 text-xs text-slate-500 font-mono">Last ping: <span id="live-time"
+                        class="text-ion"></span></p>
+            </div>
+        </div>
+
+        <a href="#about" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-ion animate-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </a>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section id="about" class="relative py-32 px-6 z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <p class="font-display text-ion text-xs tracking-[0.3em] uppercase mb-3">Pilot Dossier</p>
+                <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">ABOUT THE <span
+                        class="text-plasma glow-text">NAVIGATOR</span></h2>
+            </div>
+
+            <div class="grid md:grid-cols-5 gap-12 items-center">
+                <div class="md:col-span-2 flex justify-center reveal">
+                    <div class="relative w-64 h-64 sm:w-72 sm:h-72">
+
+                        <div class="absolute inset-0 rounded-full border border-plasma/40 orbit-ring"></div>
+                        <div class="absolute inset-0 rounded-full border-2 border-ion/60 pulsing-ring"></div>
+                        <div class="absolute inset-0 rounded-full border border-dashed border-ion/20 orbit-ring-rev">
+                        </div>
+
+                        <div class="absolute inset-0 orbit-ring pointer-events-none">
+                            <div class="orbit-dot text-ion"
+                                style="top: -4px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 15px #22d3ee;">
+                            </div>
+                            <div class="orbit-dot text-flare"
+                                style="bottom: -4px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 15px #f472b6;">
+                            </div>
+                            <div class="orbit-dot text-gold"
+                                style="top: 50%; left: -4px; transform: translateY(-50%); box-shadow: 0 0 15px #fbbf24;">
+                            </div>
+                            <div class="orbit-dot text-plasma"
+                                style="top: 50%; right: -4px; transform: translateY(-50%); box-shadow: 0 0 15px #7c3aed;">
+                            </div>
+                        </div>
+
+                        <div
+                            class="absolute inset-4 rounded-full bg-gradient-to-br from-nebula to-void border border-ion/30 flex items-center justify-center overflow-hidden planet">
+                            <img src="nexusJ.jpg" alt="James Loran — Developer" class="profile-img glitch-hover" />
+                            <div class="scanline-overlay">
+                                <div class="scanline-beam"></div>
+                            </div>
+                        </div>
+
+                        <div class="absolute -top-2 right-6 w-4 h-4 rounded-full bg-flare pulse-glow"></div>
+                        <div class="absolute bottom-4 -left-2 w-3 h-3 rounded-full bg-ion pulse-glow"></div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-3 reveal">
+                    <p class="text-slate-300 leading-relaxed text-lg">
+                        I'm a developer who treats every project like a mission briefing: define the objective,
+                        map the unknowns, and build something that survives contact with reality. Over the last
+                        four years I've piloted products from prototype to production across startups and
+                        established crews alike.
+                    </p>
+                    <p class="mt-4 text-slate-400 leading-relaxed">
+                        When I'm not deep in a codebase, I'm reading about actual space exploration, tinkering
+                        with generative art.
+                    </p>
+
+                    <div class="mt-8 grid grid-cols-2 gap-4">
+                        <div class="hud-panel p-4">
+                            <p class="font-display text-ion text-xs uppercase tracking-widest">Origin</p>
+                            <p class="text-white mt-1">Myanmar</p>
+                        </div>
+                        <div class="hud-panel p-4">
+                            <p class="font-display text-ion text-xs uppercase tracking-widest">Role</p>
+                            <p class="text-white mt-1">Full-Stack Developer</p>
+                        </div>
+                        <div class="hud-panel p-4">
+                            <p class="font-display text-ion text-xs uppercase tracking-widest">Focus</p>
+                            <p class="text-white mt-1">Web & Systems</p>
+                        </div>
+                        <div class="hud-panel p-4">
+                            <p class="font-display text-ion text-xs uppercase tracking-widest">Language</p>
+                            <p class="text-white mt-1">EN / MR</p>
+                        </div>
+                    </div>
+
+                    <!--<a href="#"
+                        class="mt-8 inline-flex items-center gap-2 font-display text-sm uppercase tracking-widest text-gold hover:text-white transition">
+                        Download Flight Log (Resume)
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                        </svg>
+                    </a>-->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- ===== NEW SECTION: MISSION PROFILE (Why Me + Journey) ===== -->
+    <!-- ====================================================== -->
+    <section id="profile"
+        class="relative py-32 px-6 z-10 bg-gradient-to-b from-transparent via-nebula/30 to-transparent">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Section Header -->
+            <div class="text-center mb-20 reveal">
+                <p class="font-display text-ion text-xs tracking-[0.3em] uppercase mb-3">Mission Profile</p>
+                <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">CORE <span
+                        class="text-plasma glow-text">COMPETENCIES</span></h2>
+                <p class="text-slate-400 mt-4 max-w-2xl mx-auto">Why you should consider me as your next crew member.
+                </p>
+            </div>
+
+            <!-- ===== PART 1: Why you work with me (Grid) ===== -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-32 reveal">
+                <!-- Item 1 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-ion mb-2">⌨️</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Clean Code</p>
+                    <p class="text-slate-400 text-xs">Maintainable & Scalable</p>
+                </div>
+                <!-- Item 2 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-flare mb-2">✦</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Responsive UI</p>
+                    <p class="text-slate-400 text-xs">Pixel Perfect Design</p>
+                </div>
+                <!-- Item 3 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-gold mb-2">⬡</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Full Stack</p>
+                    <p class="text-slate-400 text-xs">Frontend + Backend</p>
+                </div>
+                <!-- Item 4 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-plasma mb-2">🧩</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Problem Solving</p>
+                    <p class="text-slate-400 text-xs">Analytical Mindset</p>
+                </div>
+                <!-- Item 5 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-ion mb-2">🚀</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Fast Learner</p>
+                    <p class="text-slate-400 text-xs">Adapt to New Tech</p>
+                </div>
+                <!-- Item 6 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-flare mb-2">🤝</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Team Collab</p>
+                    <p class="text-slate-400 text-xs">Agile & Communicative</p>
+                </div>
+                <!-- Item 7 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-gold mb-2">↻</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Continuous Improv.</p>
+                    <p class="text-slate-400 text-xs">Always Evolving</p>
+                </div>
+                <!-- Item 8 -->
+                <div
+                    class="hud-panel p-5 text-center card-hover transition-all duration-300 hover:border-ion/80 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                    <div class="text-3xl text-plasma mb-2">⊹</div>
+                    <p class="font-display text-xs text-ion uppercase tracking-widest mb-1">Modern Web</p>
+                    <p class="text-slate-400 text-xs">Latest Technologies</p>
+                </div>
+            </div>
+
+            <!-- ===== PART 2: My Journey (Timeline) ===== -->
+            <div class="reveal">
+                <div class="text-center mb-16">
+                    <p class="font-display text-flare text-xs tracking-[0.3em] uppercase mb-3">Flight Path</p>
+                    <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">MY <span
+                            class="text-plasma glow-text">JOURNEY</span></h2>
+                </div>
+
+                <div class="relative max-w-4xl mx-auto px-4 md:px-8">
+
+                    <!-- Timeline Line (Glowing) -->
+                    <div class="timeline-line hidden md:block"></div>
+
+                    <!-- Item 1 -->
+                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
+                        <div class="timeline-dot active pulse-glow"></div>
+                        <div class="timeline-card w-full md:w-[45%] md:ml-auto hud-panel p-6 reveal">
+                            <span class="font-display text-xs text-ion">STEP 01</span>
+                            <h4 class="text-white text-lg font-bold mt-1">HTML Foundations</h4>
+                            <p class="text-slate-400 text-sm mt-1">Started with simple HTML pages to structure the web.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
+                        <div class="timeline-dot pulse-glow"></div>
+                        <div class="timeline-card w-full md:w-[45%] md:mr-auto hud-panel p-6 reveal">
+                            <span class="font-display text-xs text-ion">STEP 02</span>
+                            <h4 class="text-white text-lg font-bold mt-1">CSS & Aesthetics</h4>
+                            <p class="text-slate-400 text-sm mt-1">Learned CSS to create attractive, responsive user
+                                interfaces.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
+                        <div class="timeline-dot pulse-glow"></div>
+                        <div class="timeline-card w-full md:w-[45%] md:ml-auto hud-panel p-6 reveal">
+                            <span class="font-display text-xs text-ion">STEP 03</span>
+                            <h4 class="text-white text-lg font-bold mt-1">JavaScript & Interactivity</h4>
+                            <p class="text-slate-400 text-sm mt-1">Discovered JavaScript and brought static pages to
+                                life.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
+                        <div class="timeline-dot pulse-glow"></div>
+                        <div class="timeline-card w-full md:w-[45%] md:mr-auto hud-panel p-6 reveal">
+                            <span class="font-display text-xs text-ion">STEP 04</span>
+                            <h4 class="text-white text-lg font-bold mt-1">Backend with Python</h4>
+                            <p class="text-slate-400 text-sm mt-1">Moved into backend programming with Python and
+                                Django.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
+                        <div class="timeline-dot pulse-glow"></div>
+                        <div class="timeline-card w-full md:w-[45%] md:ml-auto hud-panel p-6 reveal">
+                            <span class="font-display text-xs text-ion">STEP 05</span>
+                            <h4 class="text-white text-lg font-bold mt-1">Full Stack Projects</h4>
+                            <p class="text-slate-400 text-sm mt-1">Built complete projects using databases and
+                                authentication systems.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="timeline-item relative flex flex-col md:flex-row items-start">
+                        <div class="timeline-dot pulse-glow"></div>
+                        <div class="timeline-card w-full md:w-[45%] md:mr-auto hud-panel p-6 reveal">
+                            <span class="font-display text-xs text-ion">STEP 06</span>
+                            <h4 class="text-white text-lg font-bold mt-1">Modern Architecture</h4>
+                            <p class="text-slate-400 text-sm mt-1">Now expanding into Flutter and modern software
+                                architecture.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== SKILLS ===== -->
+    <section id="skills"
+        class="relative py-32 px-6 z-10 bg-gradient-to-b from-transparent via-nebula/40 to-transparent">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <p class="font-display text-ion text-xs tracking-[0.3em] uppercase mb-3">Ship Systems</p>
+                <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">TECHNICAL <span
+                        class="text-plasma glow-text">ARSENAL</span></h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-x-16 gap-y-8 mb-20 reveal">
+                <div class="skill-row" data-level="92">
+                    <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
+                        <span class="text-white">JavaScript / TypeScript</span><span class="text-ion">92%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="skill-fill h-full rounded-full"></div>
+                    </div>
+                </div>
+                <div class="skill-row" data-level="88">
+                    <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
+                        <span class="text-white">PHP</span><span class="text-ion">88%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="skill-fill h-full rounded-full"></div>
+                    </div>
+                </div>
+                <div class="skill-row" data-level="85">
+                    <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
+                        <span class="text-white">Django /REST-APIs</span><span class="text-ion">85%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="skill-fill h-full rounded-full"></div>
+                    </div>
+                </div>
+                <div class="skill-row" data-level="78">
+                    <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
+                        <span class="text-white">Python</span><span class="text-ion">78%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="skill-fill h-full rounded-full"></div>
+                    </div>
+                </div>
+                <div class="skill-row" data-level="90">
+                    <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
+                        <span class="text-white">UI / UX Design</span><span class="text-ion">90%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="skill-fill h-full rounded-full"></div>
+                    </div>
+                </div>
+                <div class="skill-row" data-level="82">
+                    <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
+                        <span class="text-white">Cloud / DevOps</span><span class="text-ion">82%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div class="skill-fill h-full rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-6 reveal">
+                <div class="hud-panel p-5 text-center card-hover">
+                    <p class="font-display text-2xl text-white mb-1">JS</p>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Core</p>
+                </div>
+                <div class="hud-panel p-5 text-center card-hover">
+                    <p class="font-display text-2xl text-white mb-1">TS</p>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Typed</p>
+                </div>
+                <div class="hud-panel p-5 text-center card-hover">
+                    <p class="font-display text-2xl text-white mb-1">🐘</p>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">PHP</p>
+                </div>
+                <div class="hud-panel p-5 text-center card-hover">
+                    <p class="font-display text-2xl text-white mb-1">◭</p>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Tailwind</p>
+                </div>
+                <div class="hud-panel p-5 text-center card-hover">
+                    <p class="font-display text-2xl text-white mb-1">🐍</p>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Python</p>
+                </div>
+                <div class="hud-panel p-5 text-center card-hover">
+                    <p class="font-display text-2xl text-white mb-1">◈</p>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Git</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROJECTS (UPDATED WITH IMAGES) ===== -->
+    <section id="projects" class="relative py-32 px-6 z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <p class="font-display text-ion text-xs tracking-[0.3em] uppercase mb-3">Mission Log</p>
+                <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">FEATURED <span
+                        class="text-plasma glow-text">MISSIONS</span></h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1: ORBIT CRM -->
+                <div class="hud-panel card-hover overflow-hidden reveal" data-tilt>
+                    <div class="hud-corner corner-tl"></div>
+                    <div class="hud-corner corner-br"></div>
+                    <div class="h-44 relative overflow-hidden bg-nebula">
+                        <img src="fitness.png" alt="ORBIT CRM - SaaS Dashboard" class="w-full h-full object-cover" />
+                        <!-- Sci-Fi overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-plasma/10 via-transparent to-ion/10"></div>
+                    </div>
+                    <div class="p-6">
+                        <p class="font-display text-xs text-ion uppercase tracking-widest mb-2">Web App · Landing Page
+                        </p>
+                        <h3 class="font-display text-xl text-white font-700 mb-2">FITMASTER TRAINER</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">A modern fitness trainer website designed
+                            to showcase workout programs,
+                            pricing plans, trainer profiles, and responsive UI experiences with smooth animations.</p>
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-plasma/20 text-plasma border border-plasma/30">HTML</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/30">CSS</span>
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/30">JavaScript</span>
+                        </div>
+                        <div class="flex gap-4 font-display text-xs uppercase tracking-widest">
+                            <a href="https://fitness-trainer-landing.netlify.app/"
+                                class="text-white hover:text-ion transition">Live Demo →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: STARFORGE TRACKER -->
+                <div class="hud-panel card-hover overflow-hidden reveal" data-tilt>
+                    <div class="hud-corner corner-tl"></div>
+                    <div class="hud-corner corner-br"></div>
+                    <div class="h-44 relative overflow-hidden bg-nebula">
+                        <img src="expense.png" alt="STARFORGE TRACKER - Fitness App"
+                            class="w-full h-full object-cover" />
+                        <!-- Sci-Fi overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-ion/10 via-transparent to-flare/10"></div>
+                    </div>
+                    <div class="p-6">
+                        <p class="font-display text-xs text-ion uppercase tracking-widest mb-2">Web App · Finance Tool
+                        </p>
+                        <h3 class="font-display text-xl text-white font-700 mb-2">EXPENSE TRACKER</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">A personal finance management application
+                            that helps users track income,
+                            expenses, categories, and balance with dynamic calculations and local storage.</p>
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-plasma/20 text-plasma border border-plasma/30">HTML</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/30">CSS</span>
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/30">JavaScript</span>
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-success/10 text-success border border-success/30">Local
+                                Storage</span>
+                        </div>
+                        <div class="flex gap-4 font-display text-xs uppercase tracking-widest">
+                            <a href="https://expense-tracker-nexusj.netlify.app/"
+                                class="text-white hover:text-ion transition">Live Demo →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: DEEPFIELD ANALYTICS -->
+                <div class="hud-panel card-hover overflow-hidden reveal" data-tilt>
+                    <div class="hud-corner corner-tl"></div>
+                    <div class="hud-corner corner-br"></div>
+                    <div class="h-44 relative overflow-hidden bg-nebula">
+                        <img src="todo.png" alt="DEEPFIELD ANALYTICS - Data Dashboard"
+                            class="w-full h-full object-cover" />
+                        <!-- Sci-Fi overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-flare/10 via-transparent to-plasma/10"></div>
+                    </div>
+                    <div class="p-6">
+                        <p class="font-display text-xs text-ion uppercase tracking-widest mb-2">Web App · Productivity
+                            Tool</p>
+                        <h3 class="font-display text-xl text-white font-700 mb-2">TODO MANAGER</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">A productivity task management
+                            application with task creation,
+                            filtering, priority management, drag and drop organization, and persistent storage.</p>
+                        <div class="flex gap-2 mb-4 flex-wrap">
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-plasma/20 text-plasma border border-plasma/30">HTML</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/30">CSS</span>
+                            <span
+                                class="text-xs px-2/py-1 rounded bg-flare/10 text-flare border border-flare/30">JavaScript</span>
+                            <span
+                                class="text-xs px-2 py-1 rounded bg-success/10 text-success border border-success/30">DOM
+                                API</span>
+                        </div>
+                        <div class="flex gap-4 font-display text-xs uppercase tracking-widest">
+                            <a href="https://todo-manager-nexusj.netlify.app/"
+                                class="text-white hover:text-ion transition">Live Demo →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-14 reveal">
+                <a href="#"
+                    class="btn-thrust inline-block font-display uppercase text-sm tracking-widest px-8 py-3.5 border border-plasma/50 text-white rounded-sm hover:bg-plasma/10 hover:shadow-[0_0_25px_rgba(124,58,237,0.4)]">
+                    View Full Archive
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT (UPDATED - WORKING FORM) ===== -->
+    <section id="contact"
+        class="relative py-32 px-6 z-10 bg-gradient-to-b from-transparent via-nebula/40 to-transparent">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-14 reveal">
+                <p class="font-display text-ion text-xs tracking-[0.3em] uppercase mb-3">Open Frequency</p>
+                <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">ESTABLISH <span
+                        class="text-plasma glow-text">CONTACT</span></h2>
+                <p class="text-slate-400 mt-4 max-w-xl mx-auto">Have a mission in mind? Send a transmission and I'll
+                    respond within one orbital cycle (24h).</p>
+            </div>
+
+            <div class="hud-panel p-8 sm:p-10 reveal">
+                <div class="hud-corner corner-tl"></div>
+                <div class="hud-corner corner-br"></div>
+
+                <!-- ===== Formspree Form ===== -->
+                <!-- 
+                    ⚠️ IMPORTANT: 
+                    1. Go to https://formspree.io/register and create a free account
+                    2. Create a new form and enter your Gmail address
+                    3. Copy your Form ID (e.g., "xyzabcde") from the dashboard
+                    4. Replace "YOUR_FORMSPREE_ID" below with your actual Form ID
+                -->
+                <form id="contact-form" action="https://formspree.io/f/mrpzglbp" method="POST"
+                    class="grid sm:grid-cols-2 gap-6">
+
+                    <div class="sm:col-span-1">
+                        <label class="font-display text-xs text-ion uppercase tracking-widest block mb-2">Callsign
+                            (Name)</label>
+                        <input type="text" name="name" required
+                            class="w-full bg-white/5 border border-plasma/30 rounded-sm px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-ion focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition"
+                            placeholder="Your name">
+                    </div>
+                    <div class="sm:col-span-1">
+                        <label class="font-display text-xs text-ion uppercase tracking-widest block mb-2">Frequency
+                            (Email)</label>
+                        <input type="email" name="email" required
+                            class="w-full bg-white/5 border border-plasma/30 rounded-sm px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-ion focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition"
+                            placeholder="you@domain.com">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="font-display text-xs text-ion uppercase tracking-widest block mb-2">Transmission
+                            (Message)</label>
+                        <textarea rows="5" name="message" required
+                            class="w-full bg-white/5 border border-plasma/30 rounded-sm px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-ion focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] transition resize-none"
+                            placeholder="Describe your mission..."></textarea>
+                    </div>
+                    <div class="sm:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <button type="submit"
+                            class="btn-thrust font-display uppercase text-sm tracking-widest px-10 py-3.5 bg-gradient-to-r from-plasma to-ion text-void font-bold rounded-sm shadow-[0_0_25px_rgba(34,211,238,0.5)] hover:shadow-[0_0_40px_rgba(34,211,238,0.8)] w-full sm:w-auto">
+                            Send Transmission
+                        </button>
+                        <p id="form-status" class="text-sm font-display hidden"></p>
+                    </div>
+                </form>
+
+                <div class="mt-10 pt-8 border-t border-plasma/20 flex flex-wrap justify-center gap-8">
+                    <!-- GitHub -->
+                    <a href="https://github.com/nexusJ-01" target="_blank" rel="noopener noreferrer"
+                        class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
+                        GitHub
+                    </a>
+
+                    <!-- Telegram (သင့်ရဲ့ Username ထည့်ပါ) -->
+                    <a href="https://t.me/@James_212026" target="_blank" rel="noopener noreferrer"
+                        class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
+                        Telegram
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://instagram.com/nexusj01" target="_blank" rel="noopener noreferrer"
+                        class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
+                        Instagram
+                    </a>
+
+                    <!-- Email (Gmail ကို တိုက်ရိုက်ဖွင့်ပေးမယ်) -->
+                    <a href="mailto:doublejames1366 @gmail.com"
+                        class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
+                        Email
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="relative z-10 py-8 text-center border-t border-plasma/20">
+        <p class="text-slate-500 text-sm font-display tracking-widest">© 2026 JAMES LORAN — TRANSMITTING FROM MYANMAR
+        </p>
+    </footer>
+
+    <script>
+        // ============================
+        // 1. STARFIELD & METEORS
+        // ============================
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let w, h, stars = [];
+        let meteors = [];
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            initStars(220);
+            initMeteors();
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function initStars(count) {
+            stars = [];
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.4 + 0.2,
+                    speed: Math.random() * 0.4 + 0.05,
+                    twinkle: Math.random() * Math.PI * 2,
+                });
+            }
+        }
+
+        function initMeteors() {
+            meteors = [];
+            for (let i = 0; i < 3; i++) {
+                meteors.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h * 0.4,
+                    speed: 5 + Math.random() * 8,
+                    angle: (Math.PI / 4) + (Math.random() * 0.6 - 0.3),
+                    life: 0,
+                    maxLife: 50 + Math.random() * 60,
+                    active: false
+                });
+            }
+        }
+        initStars(220);
+        initMeteors();
+
+        function drawStars() {
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = '#050510';
+            ctx.fillRect(0, 0, w, h);
+
+            // Stars
+            for (const s of stars) {
+                s.twinkle += 0.02;
+                const alpha = 0.5 + Math.sin(s.twinkle) * 0.5;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                ctx.fill();
+                s.y += s.speed;
+                if (s.y > h) {
+                    s.y = 0;
+                    s.x = Math.random() * w;
+                }
+            }
+
+            // Meteors (Shooting Stars)
+            for (const m of meteors) {
+                if (!m.active) {
+                    if (Math.random() < 0.005) {
+                        m.active = true;
+                        m.life = 0;
+                        m.x = Math.random() * w;
+                        m.y = Math.random() * h * 0.3;
+                        m.angle = (Math.PI / 4) + (Math.random() * 0.6 - 0.3);
+                        m.speed = 5 + Math.random() * 8;
+                        m.maxLife = 50 + Math.random() * 60;
+                    }
+                    continue;
+                }
+
+                m.life++;
+                const alpha = 1 - (m.life / m.maxLife);
+
+                ctx.beginPath();
+                ctx.moveTo(m.x, m.y);
+                const tailX = m.x - Math.cos(m.angle) * 40;
+                const tailY = m.y - Math.sin(m.angle) * 40;
+                ctx.lineTo(tailX, tailY);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.lineWidth = 2 + Math.random() * 1.5;
+                ctx.shadowColor = 'rgba(34, 211, 238, 0.8)';
+                ctx.shadowBlur = 20;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                m.x += Math.cos(m.angle) * m.speed;
+                m.y += Math.sin(m.angle) * m.speed;
+
+                if (m.life > m.maxLife || m.x > w || m.y > h) m.active = false;
+            }
+
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // ============================
+        // 2. CURSOR GLOW (Soft)
+        // ============================
+        const cursorGlow = document.getElementById('cursor-glow');
+        window.addEventListener('mousemove', (e) => {
+            if (cursorGlow) {
+                cursorGlow.style.left = e.clientX + 'px';
+                cursorGlow.style.top = e.clientY + 'px';
+            }
+        });
+
+        // ============================
+        // 3. FEATURE A: CUSTOM CURSOR
+        // ============================
+        const customCursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            customCursor.style.left = e.clientX + 'px';
+            customCursor.style.top = e.clientY + 'px';
+        });
+
+        const interactiveEls = document.querySelectorAll(
+            'a, button, input, textarea, .card-hover, .nav-link, .btn-thrust, .hud-panel'
+        );
+        interactiveEls.forEach(el => {
+            el.addEventListener('mouseenter', () => customCursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => customCursor.classList.remove('hover'));
+        });
+
+        // ============================
+        // 4. FEATURE B: BACK TO TOP
+        // ============================
+        const backBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backBtn.classList.add('visible');
+            } else {
+                backBtn.classList.remove('visible');
+            }
+        });
+        backBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ============================
+        // 5. FEATURE C: TOUCH RIPPLE (Mobile + Desktop)
+        // ============================
+        const rippleTargets = document.querySelectorAll(
+            'a, button, .btn-thrust, .card-hover, .hud-panel, .nav-link, input, textarea, #backToTop'
+        );
+
+        rippleTargets.forEach(el => {
+            el.addEventListener('click', function (e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                const size = Math.max(rect.width, rect.height) * 0.7;
+                ripple.style.width = size + 'px';
+                ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.marginLeft = -(size / 2) + 'px';
+                ripple.style.marginTop = -(size / 2) + 'px';
+
+                this.appendChild(ripple);
+                setTimeout(() => {
+                    ripple.remove();
+                }, 800);
+            });
+        });
+
+        // ============================
+        // 6. NAVBAR SCROLL
+        // ============================
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                navbar.classList.add('bg-void/80', 'backdrop-blur-md', 'shadow-lg', 'shadow-plasma/10');
+            } else {
+                navbar.classList.remove('bg-void/80', 'backdrop-blur-md', 'shadow-lg', 'shadow-plasma/10');
+            }
+        });
+
+        // ============================
+        // 7. MOBILE MENU
+        // ============================
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // ============================
+        // 8. ACTIVE NAV LINK
+        // ============================
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                if (rect.top <= 120 && rect.bottom >= 120) current = sec.id;
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+            });
+        });
+
+        // ============================
+        // 9. REVEAL ON SCROLL
+        // ============================
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        revealEls.forEach(el => revealObserver.observe(el));
+
+        // ============================
+        // 10. SKILL BARS
+        // ============================
+        const skillRows = document.querySelectorAll('.skill-row');
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fill = entry.target.querySelector('.skill-fill');
+                    const level = entry.target.getAttribute('data-level');
+                    setTimeout(() => { fill.style.width = level + '%'; }, 100);
+                    skillObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        skillRows.forEach(row => skillObserver.observe(row));
+
+        // ============================
+        // 11. COUNTERS
+        // ============================
+        const counters = document.querySelectorAll('[data-counter]');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.getAttribute('data-counter'));
+                    let current = 0;
+                    const step = Math.max(1, Math.ceil(target / 40));
+                    const tick = () => {
+                        current += step;
+                        if (current >= target) { el.textContent = target; return; }
+                        el.textContent = current;
+                        requestAnimationFrame(tick);
+                    };
+                    tick();
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => counterObserver.observe(c));
+
+        // ============================
+        // 12. LIVE CLOCK
+        // ============================
+        function updateTime() {
+            const el = document.getElementById('live-time');
+            if (el) {
+                const now = new Date();
+                el.textContent = now.toUTCString().split(' ')[4] + ' UTC';
+            }
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // ============================
+        // 13. CONTACT FORM (UPDATED - WORKING)
+        // ============================
+        const form = document.getElementById('contact-form');
+        const status = document.getElementById('form-status');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Show sending status
+            status.textContent = '📡 Transmitting...';
+            status.className = 'text-sm font-display text-ion';
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    status.textContent = '✓ Transmission received. I\'ll respond within 24h.';
+                    status.className = 'text-sm font-display text-emerald-400';
+                    form.reset();
+                } else {
+                    const errorData = await response.json();
+                    status.textContent = '⚠️ Error: ' + (errorData.error || 'Something went wrong. Please try again.');
+                    status.className = 'text-sm font-display text-flare';
+                }
+            } catch (error) {
+                status.textContent = '⚠️ Connection error. Please check your network and try again.';
+                status.className = 'text-sm font-display text-flare';
+            }
+
+            // Auto-hide status after 6 seconds
+            setTimeout(() => {
+                status.className = 'text-sm font-display hidden';
+            }, 6000);
+        });
+
+        // ============================
+        // 14. TYPWRITER
+        // ============================
+        document.addEventListener('DOMContentLoaded', function () {
+            const text =
+                'Full-Stack Developer & Digital Architect, charting new frontiers in code.';
+            const typedSpan = document.getElementById('typed-text');
+            if (!typedSpan) return;
+
+            let index = 0;
+            let isDeleting = false;
+
+            function typeWriter() {
+                if (!isDeleting && index <= text.length) {
+                    typedSpan.textContent = text.substring(0, index);
+                    index++;
+                    if (index > text.length) {
+                        isDeleting = true;
+                        setTimeout(typeWriter, 3000);
+                        return;
+                    }
+                    setTimeout(typeWriter, 30);
+                } else if (isDeleting && index >= 0) {
+                    typedSpan.textContent = text.substring(0, index);
+                    index--;
+                    if (index < 0) {
+                        isDeleting = false;
+                        setTimeout(typeWriter, 500);
+                        return;
+                    }
+                    setTimeout(typeWriter, 15);
+                } else {
+                    setTimeout(typeWriter, 30);
+                }
+            }
+            typeWriter();
+        });
+
+        // ============================
+        // 15. 3D TILT
+        // ============================
+        document.querySelectorAll('[data-tilt]').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -8;
+                const rotateY = ((x - centerX) / centerX) * 8;
+                card.style.transform =
+                    `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform =
+                    'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            });
+        });
+
+        // ============================
+        // 16. PROGRESS BAR
+        // ============================
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            document.getElementById('progress-bar').style.width = scrollPercent + '%';
+        });
+    </script>
+
+</body>
+
+</html>
