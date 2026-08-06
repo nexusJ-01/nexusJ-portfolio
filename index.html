@@ -581,71 +581,184 @@
         }
 
         /* ====================================================== */
-        /* ===== FEATURE D: Journey Timeline ===== */
+        /* ===== UPDATED JOURNEY TIMELINE 2.0 ===== */
         /* ====================================================== */
-        .timeline-line {
+
+        /* Timeline Line - Animated */
+        .timeline-line-wrapper {
             position: absolute;
-            left: 18px;
+            left: 50%;
+            top: 60px;
+            bottom: 40px;
+            width: 3px;
+            transform: translateX(-50%);
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .timeline-line-bg {
+            position: absolute;
             top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            width: 2px;
+            background: rgba(34, 211, 238, 0.15);
+            border-radius: 2px;
+        }
+
+        .timeline-line-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
             background: linear-gradient(to bottom, #22d3ee, #7c3aed, #22d3ee);
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+            border-radius: 2px;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.4), 0 0 60px rgba(124, 58, 237, 0.2);
+            transition: height 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timeline-line-fill.animated {
+            height: 100%;
+        }
+
+        /* Timeline Dot with Number */
+        .timeline-dot-wrapper {
+            position: relative;
+            z-index: 5;
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            margin-right: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .timeline-dot-wrapper {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                margin-right: 0;
+            }
         }
 
         .timeline-dot {
-            position: absolute;
-            left: 12px;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 14px;
+            position: relative;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: #050510;
-            border: 2px solid #22d3ee;
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.6), inset 0 0 10px rgba(34, 211, 238, 0.2);
-            z-index: 5;
+            border: 2.5px solid rgba(34, 211, 238, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3), inset 0 0 20px rgba(34, 211, 238, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .timeline-dot::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            animation: orbitRing 3s linear infinite;
+        }
+
+        @keyframes orbitRing {
+            0% {
+                transform: rotate(0deg) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: rotate(180deg) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+                opacity: 0.6;
+            }
+        }
+
+        .timeline-dot .dot-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: #22d3ee;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+            z-index: 2;
         }
 
         .timeline-dot.active {
-            background: #22d3ee;
-            box-shadow: 0 0 30px rgba(34, 211, 238, 0.8);
+            border-color: #22d3ee;
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.6), inset 0 0 30px rgba(34, 211, 238, 0.2);
         }
 
-        /* Timeline cards alternating sides on desktop */
-        @media (min-width: 768px) {
-            .timeline-item:nth-child(odd) .timeline-card {
-                margin-left: 0;
-                margin-right: auto;
-                text-align: left;
-            }
-
-            .timeline-item:nth-child(even) .timeline-card {
-                margin-left: auto;
-                margin-right: 0;
-                text-align: right;
-            }
-
-            /* Keep dot positions consistent */
-            .timeline-item .timeline-dot {
-                left: 50%;
-            }
+        .timeline-dot.active .dot-number {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
         }
 
+        /* Timeline Card - Enhanced Hover */
+        .timeline-card {
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .timeline-card:hover {
+            border-color: rgba(34, 211, 238, 0.8);
+            box-shadow: 0 20px 60px -10px rgba(124, 58, 237, 0.6), 0 0 40px rgba(34, 211, 238, 0.1);
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .timeline-card .group:hover .text-ion {
+            color: #fff;
+        }
+
+        /* Tech Tags */
+        .timeline-card .border-plasma\/20 {
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        .timeline-card .border-ion\/20 {
+            border-color: rgba(34, 211, 238, 0.2);
+        }
+
+        .timeline-card .border-flare\/20 {
+            border-color: rgba(244, 114, 182, 0.2);
+        }
+
+        /* Mobile Adjustments for Timeline */
         @media (max-width: 767px) {
-            .timeline-line {
-                left: 12px;
+            .timeline-line-wrapper {
+                left: 16px;
+                transform: none;
+            }
+
+            .timeline-dot-wrapper {
+                width: 36px;
+                height: 36px;
+                margin-right: 12px;
+                position: relative;
+                left: 0;
+                transform: none;
             }
 
             .timeline-dot {
-                left: 6px;
-                transform: translateX(0);
-                width: 12px;
-                height: 12px;
+                width: 36px;
+                height: 36px;
             }
 
-            .timeline-item .timeline-card {
-                margin-left: 30px !important;
+            .timeline-dot .dot-number {
+                font-size: 9px;
+            }
+
+            .timeline-card {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
                 text-align: left !important;
+                width: 100% !important;
             }
         }
 
@@ -722,6 +835,7 @@
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">Pilot</a></li>
                 <li><a href="#profile" class="nav-link">Profile</a></li>
+                <li><a href="#journey" class="nav-link">Journey</a></li>
                 <li><a href="#skills" class="nav-link">Systems</a></li>
                 <li><a href="#projects" class="nav-link">Missions</a></li>
                 <li><a href="#contact" class="nav-link">Transmit</a></li>
@@ -733,6 +847,7 @@
                 <li><a href="#home" class="mobile-link block py-1">Home</a></li>
                 <li><a href="#about" class="mobile-link block py-1">Pilot</a></li>
                 <li><a href="#profile" class="mobile-link block py-1">Profile</a></li>
+                <li><a href="#journey" class="mobile-link block py-1">Journey</a></li>
                 <li><a href="#skills" class="mobile-link block py-1">Systems</a></li>
                 <li><a href="#projects" class="mobile-link block py-1">Missions</a></li>
                 <li><a href="#contact" class="mobile-link block py-1">Transmit</a></li>
@@ -902,7 +1017,8 @@
                         </div>
                     </div>
 
-                    <!--<a href="#"
+                    <!-- ===== RESUME DOWNLOAD (UPDATED - WORKING) ===== -->
+                    <a href="resume.pdf" download
                         class="mt-8 inline-flex items-center gap-2 font-display text-sm uppercase tracking-widest text-gold hover:text-white transition">
                         Download Flight Log (Resume)
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
@@ -910,14 +1026,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
                         </svg>
-                    </a>-->
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ====================================================== -->
-    <!-- ===== NEW SECTION: MISSION PROFILE (Why Me + Journey) ===== -->
+    <!-- ===== MISSION PROFILE (Why Me) ===== -->
     <!-- ====================================================== -->
     <section id="profile"
         class="relative py-32 px-6 z-10 bg-gradient-to-b from-transparent via-nebula/30 to-transparent">
@@ -992,88 +1108,170 @@
                 </div>
             </div>
 
-            <!-- ===== PART 2: My Journey (Timeline) ===== -->
-            <div class="reveal">
-                <div class="text-center mb-16">
-                    <p class="font-display text-flare text-xs tracking-[0.3em] uppercase mb-3">Flight Path</p>
-                    <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">MY <span
-                            class="text-plasma glow-text">JOURNEY</span></h2>
-                </div>
+        </div>
+    </section>
 
-                <div class="relative max-w-4xl mx-auto px-4 md:px-8">
+    <!-- ====================================================== -->
+    <!-- ===== UPDATED JOURNEY SECTION (Flight Path 2.0) ===== -->
+    <!-- ====================================================== -->
+    <section id="journey" class="relative py-32 px-6 z-10 bg-gradient-to-b from-transparent via-nebula/30 to-transparent">
+        <div class="max-w-7xl mx-auto">
 
-                    <!-- Timeline Line (Glowing) -->
-                    <div class="timeline-line hidden md:block"></div>
-
-                    <!-- Item 1 -->
-                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
-                        <div class="timeline-dot active pulse-glow"></div>
-                        <div class="timeline-card w-full md:w-[45%] md:ml-auto hud-panel p-6 reveal">
-                            <span class="font-display text-xs text-ion">STEP 01</span>
-                            <h4 class="text-white text-lg font-bold mt-1">HTML Foundations</h4>
-                            <p class="text-slate-400 text-sm mt-1">Started with simple HTML pages to structure the web.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Item 2 -->
-                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
-                        <div class="timeline-dot pulse-glow"></div>
-                        <div class="timeline-card w-full md:w-[45%] md:mr-auto hud-panel p-6 reveal">
-                            <span class="font-display text-xs text-ion">STEP 02</span>
-                            <h4 class="text-white text-lg font-bold mt-1">CSS & Aesthetics</h4>
-                            <p class="text-slate-400 text-sm mt-1">Learned CSS to create attractive, responsive user
-                                interfaces.</p>
-                        </div>
-                    </div>
-
-                    <!-- Item 3 -->
-                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
-                        <div class="timeline-dot pulse-glow"></div>
-                        <div class="timeline-card w-full md:w-[45%] md:ml-auto hud-panel p-6 reveal">
-                            <span class="font-display text-xs text-ion">STEP 03</span>
-                            <h4 class="text-white text-lg font-bold mt-1">JavaScript & Interactivity</h4>
-                            <p class="text-slate-400 text-sm mt-1">Discovered JavaScript and brought static pages to
-                                life.</p>
-                        </div>
-                    </div>
-
-                    <!-- Item 4 -->
-                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
-                        <div class="timeline-dot pulse-glow"></div>
-                        <div class="timeline-card w-full md:w-[45%] md:mr-auto hud-panel p-6 reveal">
-                            <span class="font-display text-xs text-ion">STEP 04</span>
-                            <h4 class="text-white text-lg font-bold mt-1">Backend with Python</h4>
-                            <p class="text-slate-400 text-sm mt-1">Moved into backend programming with Python and
-                                Django.</p>
-                        </div>
-                    </div>
-
-                    <!-- Item 5 -->
-                    <div class="timeline-item relative flex flex-col md:flex-row items-start mb-12 md:mb-16">
-                        <div class="timeline-dot pulse-glow"></div>
-                        <div class="timeline-card w-full md:w-[45%] md:ml-auto hud-panel p-6 reveal">
-                            <span class="font-display text-xs text-ion">STEP 05</span>
-                            <h4 class="text-white text-lg font-bold mt-1">Full Stack Projects</h4>
-                            <p class="text-slate-400 text-sm mt-1">Built complete projects using databases and
-                                authentication systems.</p>
-                        </div>
-                    </div>
-
-                    <!-- Item 6 -->
-                    <div class="timeline-item relative flex flex-col md:flex-row items-start">
-                        <div class="timeline-dot pulse-glow"></div>
-                        <div class="timeline-card w-full md:w-[45%] md:mr-auto hud-panel p-6 reveal">
-                            <span class="font-display text-xs text-ion">STEP 06</span>
-                            <h4 class="text-white text-lg font-bold mt-1">Modern Architecture</h4>
-                            <p class="text-slate-400 text-sm mt-1">Now expanding into Flutter and modern software
-                                architecture.</p>
-                        </div>
-                    </div>
-
-                </div>
+            <!-- Section Header -->
+            <div class="text-center mb-20 reveal">
+                <p class="font-display text-flare text-xs tracking-[0.3em] uppercase mb-3">Flight Path • 2.0</p>
+                <h2 class="font-display font-900 text-3xl sm:text-5xl text-white">MY <span class="text-plasma glow-text">JOURNEY</span></h2>
+                <p class="text-slate-400 mt-4 max-w-2xl mx-auto">Every great mission starts with a single step. Here's how I navigated my way through the galaxy of code.</p>
             </div>
 
+            <!-- ===== Timeline Container ===== -->
+            <div class="relative max-w-5xl mx-auto px-4 md:px-8">
+
+                <!-- Progress Indicator -->
+                <div class="text-center mb-8 reveal">
+                    <span class="font-display text-xs text-ion uppercase tracking-widest bg-plasma/20 px-4 py-2 rounded-full border border-plasma/30">
+                        🚀 <span id="step-counter">0</span> / 6 Missions Complete
+                    </span>
+                </div>
+
+                <!-- Glowing Timeline Line (Animated) -->
+                <div class="timeline-line-wrapper hidden md:block">
+                    <div class="timeline-line-bg"></div>
+                    <div class="timeline-line-fill" id="timeline-fill"></div>
+                </div>
+
+                <!-- ===== ITEM 1 ===== -->
+                <div class="timeline-item relative flex flex-col md:flex-row items-start mb-16 md:mb-20 reveal" data-step="1">
+                    <div class="timeline-dot-wrapper">
+                        <div class="timeline-dot pulse-glow active">
+                            <span class="dot-number">01</span>
+                        </div>
+                    </div>
+                    <div class="timeline-card w-full md:w-[46%] md:ml-auto hud-panel p-6 card-hover group transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">🌐</span>
+                            <span class="font-display text-xs text-ion tracking-widest">STEP 01</span>
+                        </div>
+                        <h4 class="text-white text-xl font-bold mt-1">HTML Foundations</h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Started with simple HTML pages to structure the web. Learned the anatomy of a webpage and how to organize content semantically.</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 rounded bg-plasma/10 text-plasma border border-plasma/20">HTML5</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/20">Semantic</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ITEM 2 ===== -->
+                <div class="timeline-item relative flex flex-col md:flex-row items-start mb-16 md:mb-20 reveal" data-step="2">
+                    <div class="timeline-dot-wrapper">
+                        <div class="timeline-dot pulse-glow">
+                            <span class="dot-number">02</span>
+                        </div>
+                    </div>
+                    <div class="timeline-card w-full md:w-[46%] md:mr-auto hud-panel p-6 card-hover group transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">🎨</span>
+                            <span class="font-display text-xs text-ion tracking-widest">STEP 02</span>
+                        </div>
+                        <h4 class="text-white text-xl font-bold mt-1">CSS & Aesthetics</h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Learned CSS to create attractive, responsive user interfaces. Mastered Flexbox, Grid, and modern layout techniques.</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 rounded bg-plasma/10 text-plasma border border-plasma/20">Flexbox</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/20">Grid</span>
+                            <span class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/20">Tailwind</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ITEM 3 ===== -->
+                <div class="timeline-item relative flex flex-col md:flex-row items-start mb-16 md:mb-20 reveal" data-step="3">
+                    <div class="timeline-dot-wrapper">
+                        <div class="timeline-dot pulse-glow">
+                            <span class="dot-number">03</span>
+                        </div>
+                    </div>
+                    <div class="timeline-card w-full md:w-[46%] md:ml-auto hud-panel p-6 card-hover group transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">⚡</span>
+                            <span class="font-display text-xs text-ion tracking-widest">STEP 03</span>
+                        </div>
+                        <h4 class="text-white text-xl font-bold mt-1">JavaScript & Interactivity</h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Discovered JavaScript and brought static pages to life. Learned DOM manipulation, events, and asynchronous programming.</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 rounded bg-plasma/10 text-plasma border border-plasma/20">ES6+</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/20">DOM</span>
+                            <span class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/20">Async</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ITEM 4 ===== -->
+                <div class="timeline-item relative flex flex-col md:flex-row items-start mb-16 md:mb-20 reveal" data-step="4">
+                    <div class="timeline-dot-wrapper">
+                        <div class="timeline-dot pulse-glow">
+                            <span class="dot-number">04</span>
+                        </div>
+                    </div>
+                    <div class="timeline-card w-full md:w-[46%] md:mr-auto hud-panel p-6 card-hover group transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">🐍</span>
+                            <span class="font-display text-xs text-ion tracking-widest">STEP 04</span>
+                        </div>
+                        <h4 class="text-white text-xl font-bold mt-1">Backend with Python</h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Moved into backend programming with Python and Django. Built REST APIs, handled authentication, and managed databases.</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 rounded bg-plasma/10 text-plasma border border-plasma/20">Python</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/20">Django</span>
+                            <span class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/20">REST API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ITEM 5 ===== -->
+                <div class="timeline-item relative flex flex-col md:flex-row items-start mb-16 md:mb-20 reveal" data-step="5">
+                    <div class="timeline-dot-wrapper">
+                        <div class="timeline-dot pulse-glow">
+                            <span class="dot-number">05</span>
+                        </div>
+                    </div>
+                    <div class="timeline-card w-full md:w-[46%] md:ml-auto hud-panel p-6 card-hover group transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">🏗️</span>
+                            <span class="font-display text-xs text-ion tracking-widest">STEP 05</span>
+                        </div>
+                        <h4 class="text-white text-xl font-bold mt-1">Full Stack Projects</h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Built complete projects using databases and authentication systems. Integrated frontend with backend and deployed to production.</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 rounded bg-plasma/10 text-plasma border border-plasma/20">PostgreSQL</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/20">Auth</span>
+                            <span class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/20">Deployment</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ITEM 6 ===== -->
+                <div class="timeline-item relative flex flex-col md:flex-row items-start reveal" data-step="6">
+                    <div class="timeline-dot-wrapper">
+                        <div class="timeline-dot pulse-glow">
+                            <span class="dot-number">06</span>
+                        </div>
+                    </div>
+                    <div class="timeline-card w-full md:w-[46%] md:mr-auto hud-panel p-6 card-hover group transition-all duration-500">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-2xl">🚀</span>
+                            <span class="font-display text-xs text-ion tracking-widest">STEP 06</span>
+                        </div>
+                        <h4 class="text-white text-xl font-bold mt-1">Modern Architecture</h4>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Now expanding into Flutter and modern software architecture. Learning microservices, cloud native development, and advanced design patterns.</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="text-xs px-2 py-1 rounded bg-plasma/10 text-plasma border border-plasma/20">Flutter</span>
+                            <span class="text-xs px-2 py-1 rounded bg-ion/10 text-ion border border-ion/20">Microservices</span>
+                            <span class="text-xs px-2 py-1 rounded bg-flare/10 text-flare border border-flare/20">Cloud</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
 
@@ -1106,7 +1304,7 @@
                 </div>
                 <div class="skill-row" data-level="85">
                     <div class="flex justify-between font-display text-sm uppercase tracking-widest mb-2">
-                        <span class="text-white">Django /REST-APIs</span><span class="text-ion">85%</span>
+                        <span class="text-white">Django / REST-APIs</span><span class="text-ion">85%</span>
                     </div>
                     <div class="h-2 bg-white/5 rounded-full overflow-hidden">
                         <div class="skill-fill h-full rounded-full"></div>
@@ -1156,7 +1354,7 @@
                     <p class="text-xs text-slate-500 uppercase tracking-widest">Tailwind</p>
                 </div>
                 <div class="hud-panel p-5 text-center card-hover">
-                    <p class="font-display text-2xl text-white mb-1">⬢</p>
+                    <p class="font-display text-2xl text-white mb-1">🐍</p>
                     <p class="text-xs text-slate-500 uppercase tracking-widest">Python</p>
                 </div>
                 <div class="hud-panel p-5 text-center card-hover">
@@ -1167,7 +1365,7 @@
         </div>
     </section>
 
-    <!-- ===== PROJECTS (UPDATED WITH IMAGES) ===== -->
+    <!-- ===== PROJECTS ===== -->
     <section id="projects" class="relative py-32 px-6 z-10">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16 reveal">
@@ -1177,13 +1375,12 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Card 1: ORBIT CRM -->
+                <!-- Card 1 -->
                 <div class="hud-panel card-hover overflow-hidden reveal" data-tilt>
                     <div class="hud-corner corner-tl"></div>
                     <div class="hud-corner corner-br"></div>
                     <div class="h-44 relative overflow-hidden bg-nebula">
-                        <img src="fitness.png" alt="ORBIT CRM - SaaS Dashboard" class="w-full h-full object-cover" />
-                        <!-- Sci-Fi overlay -->
+                        <img src="fitness.png" alt="FITMASTER TRAINER" class="w-full h-full object-cover" />
                         <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent">
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-r from-plasma/10 via-transparent to-ion/10"></div>
@@ -1193,8 +1390,8 @@
                         </p>
                         <h3 class="font-display text-xl text-white font-700 mb-2">FITMASTER TRAINER</h3>
                         <p class="text-slate-400 text-sm leading-relaxed mb-4">A modern fitness trainer website designed
-                            to showcase workout programs,
-                            pricing plans, trainer profiles, and responsive UI experiences with smooth animations.</p>
+                            to showcase workout programs, pricing plans, trainer profiles, and responsive UI experiences
+                            with smooth animations.</p>
                         <div class="flex gap-2 mb-4 flex-wrap">
                             <span
                                 class="text-xs px-2 py-1 rounded bg-plasma/20 text-plasma border border-plasma/30">HTML</span>
@@ -1209,14 +1406,12 @@
                     </div>
                 </div>
 
-                <!-- Card 2: STARFORGE TRACKER -->
+                <!-- Card 2 -->
                 <div class="hud-panel card-hover overflow-hidden reveal" data-tilt>
                     <div class="hud-corner corner-tl"></div>
                     <div class="hud-corner corner-br"></div>
                     <div class="h-44 relative overflow-hidden bg-nebula">
-                        <img src="expense.png" alt="STARFORGE TRACKER - Fitness App"
-                            class="w-full h-full object-cover" />
-                        <!-- Sci-Fi overlay -->
+                        <img src="expense.png" alt="EXPENSE TRACKER" class="w-full h-full object-cover" />
                         <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent">
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-r from-ion/10 via-transparent to-flare/10"></div>
@@ -1226,8 +1421,8 @@
                         </p>
                         <h3 class="font-display text-xl text-white font-700 mb-2">EXPENSE TRACKER</h3>
                         <p class="text-slate-400 text-sm leading-relaxed mb-4">A personal finance management application
-                            that helps users track income,
-                            expenses, categories, and balance with dynamic calculations and local storage.</p>
+                            that helps users track income, expenses, categories, and balance with dynamic calculations
+                            and local storage.</p>
                         <div class="flex gap-2 mb-4 flex-wrap">
                             <span
                                 class="text-xs px-2 py-1 rounded bg-plasma/20 text-plasma border border-plasma/30">HTML</span>
@@ -1245,14 +1440,12 @@
                     </div>
                 </div>
 
-                <!-- Card 3: DEEPFIELD ANALYTICS -->
+                <!-- Card 3 -->
                 <div class="hud-panel card-hover overflow-hidden reveal" data-tilt>
                     <div class="hud-corner corner-tl"></div>
                     <div class="hud-corner corner-br"></div>
                     <div class="h-44 relative overflow-hidden bg-nebula">
-                        <img src="todo.png" alt="DEEPFIELD ANALYTICS - Data Dashboard"
-                            class="w-full h-full object-cover" />
-                        <!-- Sci-Fi overlay -->
+                        <img src="todo.png" alt="TODO MANAGER" class="w-full h-full object-cover" />
                         <div class="absolute inset-0 bg-gradient-to-t from-void/80 via-transparent to-transparent">
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-r from-flare/10 via-transparent to-plasma/10"></div>
@@ -1262,8 +1455,8 @@
                             Tool</p>
                         <h3 class="font-display text-xl text-white font-700 mb-2">TODO MANAGER</h3>
                         <p class="text-slate-400 text-sm leading-relaxed mb-4">A productivity task management
-                            application with task creation,
-                            filtering, priority management, drag and drop organization, and persistent storage.</p>
+                            application with task creation, filtering, priority management, drag and drop organization,
+                            and persistent storage.</p>
                         <div class="flex gap-2 mb-4 flex-wrap">
                             <span
                                 class="text-xs px-2 py-1 rounded bg-plasma/20 text-plasma border border-plasma/30">HTML</span>
@@ -1291,7 +1484,7 @@
         </div>
     </section>
 
-    <!-- ===== CONTACT (UPDATED - WORKING FORM) ===== -->
+    <!-- ===== CONTACT ===== -->
     <section id="contact"
         class="relative py-32 px-6 z-10 bg-gradient-to-b from-transparent via-nebula/40 to-transparent">
         <div class="max-w-5xl mx-auto">
@@ -1307,14 +1500,6 @@
                 <div class="hud-corner corner-tl"></div>
                 <div class="hud-corner corner-br"></div>
 
-                <!-- ===== Formspree Form ===== -->
-                <!-- 
-                    ⚠️ IMPORTANT: 
-                    1. Go to https://formspree.io/register and create a free account
-                    2. Create a new form and enter your Gmail address
-                    3. Copy your Form ID (e.g., "xyzabcde") from the dashboard
-                    4. Replace "YOUR_FORMSPREE_ID" below with your actual Form ID
-                -->
                 <form id="contact-form" action="https://formspree.io/f/mrpzglbp" method="POST"
                     class="grid sm:grid-cols-2 gap-6">
 
@@ -1348,27 +1533,21 @@
                     </div>
                 </form>
 
+                <!-- ===== SOCIAL LINKS (UPDATED - WORKING) ===== -->
                 <div class="mt-10 pt-8 border-t border-plasma/20 flex flex-wrap justify-center gap-8">
-                    <!-- GitHub -->
                     <a href="https://github.com/nexusJ-01" target="_blank" rel="noopener noreferrer"
                         class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
                         GitHub
                     </a>
-
-                    <!-- Telegram (သင့်ရဲ့ Username ထည့်ပါ) -->
-                    <a href="https://t.me/@James_212026" target="_blank" rel="noopener noreferrer"
+                    <a href="https://t.me/James_212026" target="_blank" rel="noopener noreferrer"
                         class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
                         Telegram
                     </a>
-
-                    <!-- Instagram -->
                     <a href="https://instagram.com/nexusj01" target="_blank" rel="noopener noreferrer"
                         class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
                         Instagram
                     </a>
-
-                    <!-- Email (Gmail ကို တိုက်ရိုက်ဖွင့်ပေးမယ်) -->
-                    <a href="mailto:doublejames1366 @gmail.com"
+                    <a href="mailto:doublejames1366@gmail.com"
                         class="flex items-center gap-2 text-slate-400 hover:text-ion transition font-display text-sm uppercase tracking-widest">
                         Email
                     </a>
@@ -1435,7 +1614,6 @@
             ctx.fillStyle = '#050510';
             ctx.fillRect(0, 0, w, h);
 
-            // Stars
             for (const s of stars) {
                 s.twinkle += 0.02;
                 const alpha = 0.5 + Math.sin(s.twinkle) * 0.5;
@@ -1450,7 +1628,6 @@
                 }
             }
 
-            // Meteors (Shooting Stars)
             for (const m of meteors) {
                 if (!m.active) {
                     if (Math.random() < 0.005) {
@@ -1491,7 +1668,7 @@
         drawStars();
 
         // ============================
-        // 2. CURSOR GLOW (Soft)
+        // 2. CURSOR GLOW
         // ============================
         const cursorGlow = document.getElementById('cursor-glow');
         window.addEventListener('mousemove', (e) => {
@@ -1534,14 +1711,14 @@
         });
 
         // ============================
-        // 5. FEATURE C: TOUCH RIPPLE (Mobile + Desktop)
+        // 5. FEATURE C: TOUCH RIPPLE
         // ============================
         const rippleTargets = document.querySelectorAll(
             'a, button, .btn-thrust, .card-hover, .hud-panel, .nav-link, input, textarea, #backToTop'
         );
 
         rippleTargets.forEach(el => {
-            el.addEventListener('click', function (e) {
+            el.addEventListener('click', function(e) {
                 const rect = this.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -1669,15 +1846,14 @@
         setInterval(updateTime, 1000);
 
         // ============================
-        // 13. CONTACT FORM (UPDATED - WORKING)
+        // 13. CONTACT FORM
         // ============================
         const form = document.getElementById('contact-form');
         const status = document.getElementById('form-status');
 
-        form.addEventListener('submit', async function (e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            // Show sending status
             status.textContent = '📡 Transmitting...';
             status.className = 'text-sm font-display text-ion';
 
@@ -1697,15 +1873,14 @@
                     form.reset();
                 } else {
                     const errorData = await response.json();
-                    status.textContent = '⚠️ Error: ' + (errorData.error || 'Something went wrong. Please try again.');
+                    status.textContent = '⚠️ Error: ' + (errorData.error || 'Something went wrong.');
                     status.className = 'text-sm font-display text-flare';
                 }
             } catch (error) {
-                status.textContent = '⚠️ Connection error. Please check your network and try again.';
+                status.textContent = '⚠️ Connection error. Please try again.';
                 status.className = 'text-sm font-display text-flare';
             }
 
-            // Auto-hide status after 6 seconds
             setTimeout(() => {
                 status.className = 'text-sm font-display hidden';
             }, 6000);
@@ -1714,7 +1889,7 @@
         // ============================
         // 14. TYPWRITER
         // ============================
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const text =
                 'Full-Stack Developer & Digital Architect, charting new frontiers in code.';
             const typedSpan = document.getElementById('typed-text');
@@ -1778,6 +1953,75 @@
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
             document.getElementById('progress-bar').style.width = scrollPercent + '%';
+        });
+
+        // ============================
+        // 17. UPDATED JOURNEY TIMELINE 2.0
+        // ============================
+        // Animated Timeline Line
+        const timelineFill = document.getElementById('timeline-fill');
+        const timelineItems = document.querySelectorAll('.timeline-item');
+
+        const timelineObserver = new IntersectionObserver((entries) => {
+            const visibleItems = [];
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const step = parseInt(entry.target.dataset.step);
+                    visibleItems.push(step);
+                }
+            });
+
+            if (visibleItems.length > 0 && timelineFill) {
+                const maxStep = Math.max(...visibleItems);
+                const progress = (maxStep / timelineItems.length) * 100;
+                timelineFill.style.height = progress + '%';
+                timelineFill.classList.add('animated');
+            }
+        }, { threshold: 0.3 });
+
+        timelineItems.forEach(item => timelineObserver.observe(item));
+
+        // Step Counter
+        const stepCounter = document.getElementById('step-counter');
+        if (stepCounter) {
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const step = parseInt(entry.target.dataset.step);
+                        stepCounter.textContent = step;
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            timelineItems.forEach(item => counterObserver.observe(item));
+        }
+
+        // Activate dot when card is visible
+        const dotObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const dot = entry.target.querySelector('.timeline-dot');
+                    if (dot) dot.classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        timelineItems.forEach(item => dotObserver.observe(item));
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.timeline-card');
+            cards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                if (isVisible) {
+                    const speed = 0.1 + (index * 0.02);
+                    const offset = (window.scrollY - rect.top) * speed;
+                    const maxOffset = 20;
+                    const finalOffset = Math.max(-maxOffset, Math.min(maxOffset, offset));
+                    card.style.transform = `translateY(${finalOffset}px)`;
+                }
+            });
         });
     </script>
 
